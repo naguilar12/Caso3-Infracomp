@@ -2,7 +2,7 @@ package infracomp;
 
 import java.util.Date;
 
-public class AAAA {
+public class PruebaTime {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
