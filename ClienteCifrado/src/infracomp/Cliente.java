@@ -95,7 +95,7 @@ public class Cliente {
 //			System.out.println("Escriba el algoritmo HMAC que desea utilizar:");
 //			algDig = stdIn.readLine();
 			algDig = "HMACSHA256";
-			sock = new Socket("localhost", 8083);
+			sock = new Socket("192.168.0.13", 8083);
 			escritor = new PrintWriter(sock.getOutputStream(), true);
 			lector = new BufferedReader(new InputStreamReader(
 					sock.getInputStream()));

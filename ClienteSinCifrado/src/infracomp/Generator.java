@@ -10,6 +10,7 @@ public class Generator {
 	 */
 	private LoadGenerator generator;
 	
+	
 	/**
 	 * Construye un nuevo Generador.
 	 */
