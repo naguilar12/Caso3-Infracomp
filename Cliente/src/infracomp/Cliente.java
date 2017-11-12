@@ -67,13 +67,15 @@ public class Cliente {
 	public Cliente()
 	{
 		try {
-			System.out.println("Escriba el algoritmo simétrico que desea utilizar:");
-			BufferedReader stdIn = new BufferedReader(new
-					InputStreamReader(System.in));
-			algSim = stdIn.readLine();
-			System.out.println("Escriba el algoritmo HMAC que desea utilizar:");
-			algDig = stdIn.readLine();
-			sock = new Socket("localhost", 8083);
+//			System.out.println("Escriba el algoritmo simï¿½trico que desea utilizar:");
+//			BufferedReader stdIn = new BufferedReader(new
+//					InputStreamReader(System.in));
+//			algSim = stdIn.readLine();
+			algSim = "DES";
+//			System.out.println("Escriba el algoritmo HMAC que desea utilizar:");
+//			algDig = stdIn.readLine();
+			algDig = "HMACSHA256";
+			sock = new Socket("192.168.0.8", 8083);
 			escritor = new PrintWriter(sock.getOutputStream(), true);
 			lector = new BufferedReader(new InputStreamReader(
 					sock.getInputStream()));
@@ -91,7 +93,7 @@ public class Cliente {
 	{
 		escritor.println("HOLA");
 		String respuesta = lector.readLine();
-		System.out.println(respuesta + ", Sesión iniciada");
+		System.out.println(respuesta + ", Sesiï¿½n iniciada");
 		if(respuesta.equals("OK"))
 		{
 			escritor.println("ALGORITMOS:"+algSim+":"+ALGORITMO_ASIM+":"+algDig);
@@ -122,7 +124,7 @@ public class Cliente {
 				X509CertificateHolder servCert = (X509CertificateHolder) pemPar.readObject();
 				pemPar.close();
 				pubKeyServer = new JcaX509CertificateConverter().getCertificate( servCert ).getPublicKey();
-				System.out.println("La llave pública del servidor es: ");
+				System.out.println("La llave pï¿½blica del servidor es: ");
 				System.out.println(pubKeyServer);
 
 				reto();
