@@ -1,7 +1,11 @@
 package infracomp;
 
+
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
@@ -38,6 +42,7 @@ import org.bouncycastle.util.io.pem.PemReader;
 import org.bouncycastle.util.io.pem.PemWriter;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
 
+import jdk.jfr.events.FileWriteEvent;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -60,6 +65,15 @@ public class Cliente {
 	SecretKey simKey = null;
 	String algSim = "";
 	String algDig = "";
+	FileWriter file1;
+	BufferedWriter bw1;
+	PrintWriter pw1;
+	FileWriter file2;
+	BufferedWriter bw2;
+	PrintWriter pw2;
+	FileWriter file3;
+	BufferedWriter bw3;
+	PrintWriter pw3;
 
 	private final static String ALGORITMO_ASIM = "RSA";
 	private final static String PROVIDER = "BC";
@@ -67,20 +81,36 @@ public class Cliente {
 	public Cliente()
 	{
 		try {
+			file1 = new FileWriter("TiemposAuServ.txt",true); 
+			bw1 = new BufferedWriter(file1);
+			pw1 = new PrintWriter(bw1);
+			file2 = new FileWriter("TiemposAuCl.txt",true); 
+			bw2 = new BufferedWriter(file2);
+			pw2 = new PrintWriter(bw2);
+			file3 = new FileWriter("TiemposResp.txt",true); 
+			bw3 = new BufferedWriter(file3);
+			pw3 = new PrintWriter(bw3);
 //			System.out.println("Escriba el algoritmo sim�trico que desea utilizar:");
 //			BufferedReader stdIn = new BufferedReader(new
 //					InputStreamReader(System.in));
 //			algSim = stdIn.readLine();
+			
 			algSim = "DES";
 //			System.out.println("Escriba el algoritmo HMAC que desea utilizar:");
 //			algDig = stdIn.readLine();
 			algDig = "HMACSHA256";
-			sock = new Socket("192.168.0.8", 8083);
+			sock = new Socket("192.168.0.13", 8083);
 			escritor = new PrintWriter(sock.getOutputStream(), true);
 			lector = new BufferedReader(new InputStreamReader(
 					sock.getInputStream()));
 			comenzarComunicacion();
-			System.out.println("Comunicacion terminada");
+//			System.out.println("Comunicacion terminada");
+			pw1.close();
+			pw2.close();
+			pw3.close();
+			bw1.close();
+			bw2.close();
+			bw3.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println("Exception: " + e.getMessage());
@@ -93,12 +123,12 @@ public class Cliente {
 	{
 		escritor.println("HOLA");
 		String respuesta = lector.readLine();
-		System.out.println(respuesta + ", Sesi�n iniciada");
+//		System.out.println(respuesta + ", Sesi�n iniciada");
 		if(respuesta.equals("OK"))
 		{
 			escritor.println("ALGORITMOS:"+algSim+":"+ALGORITMO_ASIM+":"+algDig);
 			respuesta = lector.readLine();
-			System.out.println(respuesta + ", Algortimos soportados");
+//			System.out.println(respuesta + ", Algortimos soportados");
 			if(respuesta.equals("OK"))
 			{
 
@@ -124,8 +154,8 @@ public class Cliente {
 				X509CertificateHolder servCert = (X509CertificateHolder) pemPar.readObject();
 				pemPar.close();
 				pubKeyServer = new JcaX509CertificateConverter().getCertificate( servCert ).getPublicKey();
-				System.out.println("La llave p�blica del servidor es: ");
-				System.out.println(pubKeyServer);
+//				System.out.println("La llave p�blica del servidor es: ");
+//				System.out.println(pubKeyServer);
 
 				reto();
 
@@ -201,7 +231,7 @@ public class Cliente {
 				//de números con un número par de dígitos, como 01 o 4875 o 195723.
 				reto = (int) (rand.nextInt()*10000+1);
 			}
-			System.out.println("Reto enviado: " + reto);
+//			System.out.println("Reto enviado: " + reto);
 			Cipher cipher = Cipher.getInstance(ALGORITMO_ASIM);
 			cipher.init(Cipher.ENCRYPT_MODE, pubKeyServer);
 			
@@ -216,19 +246,23 @@ public class Cliente {
 
 			byte[] retoRespuesta = DatatypeConverter.parseHexBinary(respuesta);
 			respuesta = new String (retoRespuesta);
-			System.out.println("Reto recibido: " + new String(retoRespuesta));
+//			System.out.println("Reto recibido: " + new String(retoRespuesta));
 
+			Object Date;
 			if(Integer.parseInt(respuesta)==reto)
 			{
-				System.out.println("Los retos coinciden");
+//				System.out.println("Los retos coinciden");
 				escritor.println("OK");
 			}
 			else
-				System.out.println("Los retos no coinciden");
+			{
+				
+			}
+//				System.out.println("Los retos no coinciden");
 			
 			/////////////////////////////
 			Date b = new Date ();
-			System.out.println("1. " + (b.getTime()-a.getTime()));
+			pw1.println(b.getTime()-a.getTime());
 			
 		} catch (InvalidKeyException e) {
 			// TODO Auto-generated catch block
@@ -262,9 +296,9 @@ public class Cliente {
 			cipher.init(Cipher.DECRYPT_MODE, priKeyCliente);
 			byte[] data = DatatypeConverter.parseHexBinary(respuesta);
 			simKey = new SecretKeySpec(cipher.doFinal(data),algSim);
-			System.out.println("Llave simetrica recibida");
+//			System.out.println("Llave simetrica recibida");
 			String autStr = "usuario,clave";
-			System.out.println("El usuario y la clave es: " + autStr);
+//			System.out.println("El usuario y la clave es: " + autStr);
 			cipher = Cipher.getInstance(algSim);
 			cipher.init(Cipher.ENCRYPT_MODE, simKey);
 			byte[] cipAut = cipher.doFinal(autStr.getBytes());
@@ -274,12 +308,12 @@ public class Cliente {
 			
 			////////////////////////////////////
 			Date b = new Date();
-			System.out.println("2. " + (b.getTime() - a.getTime()));
+			pw2.println(b.getTime() - a.getTime());
 			
 			cipher.init(Cipher.DECRYPT_MODE, simKey);
 			byte[] bRes = cipher.doFinal(DatatypeConverter.parseHexBinary(respuesta));
 			respuesta = new String(bRes);
-			System.out.println("La respuesta recibida es: " + respuesta);
+//			System.out.println("La respuesta recibida es: " + respuesta);
 			if(!respuesta.equalsIgnoreCase("OK")) {
 				throw new Exception("No se logro autenticar.");
 			}
@@ -311,7 +345,7 @@ public class Cliente {
 	public void transaccion() {
 		try {
 			String cedula = "1072699444";
-			System.out.println("La cedula es: " + cedula);
+//			System.out.println("La cedula es: " + cedula);
 			Cipher cipher = Cipher.getInstance(algSim);
 			cipher.init(Cipher.ENCRYPT_MODE, simKey);
 			byte[] cipCed = cipher.doFinal(cedula.getBytes());
@@ -320,12 +354,12 @@ public class Cliente {
 			Mac hmac = Mac.getInstance(algDig);
 			hmac.init(simKey);
 			byte[] hsCed = hmac.doFinal(cedula.getBytes());
-			System.out.println("El codigo hash de la cedula es: " + new String(hsCed));
+//			System.out.println("El codigo hash de la cedula es: " + new String(hsCed));
 			byte[] cipHsCed = cipher.doFinal(hsCed);
 			String hexCipHsCed = DatatypeConverter.printHexBinary(cipHsCed);
 
 			String cipMes = hexCipCed + ":" + hexCipHsCed;
-			System.out.println("El mensaje enviado es: " + cipMes);
+//			System.out.println("El mensaje enviado es: " + cipMes);
 			escritor.println(cipMes);
 			
 			/////////////////////////////////////////////
@@ -335,11 +369,11 @@ public class Cliente {
 			cipher.init(Cipher.DECRYPT_MODE, simKey);
 			byte[] bRes = cipher.doFinal(DatatypeConverter.parseHexBinary(respuesta));
 			respuesta = new String(bRes);
-			System.out.println("La respuesta recibida es: " + respuesta);
+//			System.out.println("La respuesta recibida es: " + respuesta);
 			
 			////////////////////////////////////////////////
 			Date b = new Date();
-			System.out.println("3. "+ (b.getTime() - a.getTime()));
+			pw3.println(b.getTime() - a.getTime());
 			
 			if(!respuesta.equalsIgnoreCase("OK")) {
 				throw new Exception("No se logro transmitir.");
