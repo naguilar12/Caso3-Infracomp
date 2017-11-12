@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
  */
 public class Servidor implements Runnable {
 
-	static int clientesAtendidos = 0;
+	public static int clientesAtendidos = 0;
 	/**
 	 * Constante que especifica el tiempo maximo en milisegundos que se
 	 * esperara por la respuesta de un cliente en cada una de las partes de la
@@ -124,7 +124,7 @@ public class Servidor implements Runnable {
 			
 			/////////////////////////////
 			clientesAtendidos++;
-			
+			System.out.println("4. Se han atendido: " + clientesAtendidos);
 		}
 	}
 }
