@@ -40,9 +40,6 @@ import org.bouncycastle.util.io.pem.PemObjectGenerator;
 import org.bouncycastle.util.io.pem.PemReader;
 import org.bouncycastle.util.io.pem.PemWriter;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
-
-import jdk.jfr.events.FileWriteEvent;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -98,7 +95,7 @@ public class Cliente {
 //			System.out.println("Escriba el algoritmo HMAC que desea utilizar:");
 //			algDig = stdIn.readLine();
 			algDig = "HMACSHA256";
-			sock = new Socket("192.168.0.13", 8083);
+			sock = new Socket("localhost", 8083);
 			escritor = new PrintWriter(sock.getOutputStream(), true);
 			lector = new BufferedReader(new InputStreamReader(
 					sock.getInputStream()));
