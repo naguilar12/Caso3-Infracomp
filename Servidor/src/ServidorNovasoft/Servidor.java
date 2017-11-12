@@ -81,7 +81,10 @@ public class Servidor implements Runnable {
 		while (!executor.isTerminated()) {
 
 		}
-
+		
+		//////////////////////////////
+		System.out.println("4. " + clientesAtendidos);
+		
 		System.out.println("Finished all threads");
 	}
 
@@ -119,6 +122,7 @@ public class Servidor implements Runnable {
 			System.out.println("Thread " + id + " recibe a un cliente.");
 			Worker.atenderCliente(s);
 			
+			/////////////////////////////
 			clientesAtendidos++;
 			
 		}

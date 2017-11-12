@@ -202,8 +202,11 @@ public class Cliente {
 			System.out.println("Reto enviado: " + reto);
 			Cipher cipher = Cipher.getInstance(ALGORITMO_ASIM);
 			cipher.init(Cipher.ENCRYPT_MODE, pubKeyServer);
+			
 			String hexa = DatatypeConverter.printHexBinary(cipher.doFinal(String.valueOf(reto).getBytes()));
 			///////////////////////////////
+			Date a = new Date();
+			
 			escritor.println(hexa);
 			String respuesta = "";
 			respuesta = lector.readLine();
@@ -220,7 +223,10 @@ public class Cliente {
 			}
 			else
 				System.out.println("Los retos no coinciden");
+			
 			/////////////////////////////
+			Date b = new Date ();
+			System.out.println("1. " + (b.getTime()-a.getTime()));
 			
 		} catch (InvalidKeyException e) {
 			// TODO Auto-generated catch block
@@ -246,7 +252,10 @@ public class Cliente {
 	public void autenticar() {
 		try {
 			String respuesta = lector.readLine();
+			
 			//////////////////////////////////////
+			Date a = new Date();
+			
 			Cipher cipher = Cipher.getInstance(ALGORITMO_ASIM);
 			cipher.init(Cipher.DECRYPT_MODE, priKeyCliente);
 			byte[] data = DatatypeConverter.parseHexBinary(respuesta);
@@ -260,7 +269,11 @@ public class Cliente {
 			escritor.println(DatatypeConverter.printHexBinary(cipAut));
 
 			respuesta = lector.readLine();
+			
 			////////////////////////////////////
+			Date b = new Date();
+			System.out.println("2. " + (b.getTime() - a.getTime()));
+			
 			cipher.init(Cipher.DECRYPT_MODE, simKey);
 			byte[] bRes = cipher.doFinal(DatatypeConverter.parseHexBinary(respuesta));
 			respuesta = new String(bRes);
@@ -312,14 +325,20 @@ public class Cliente {
 			String cipMes = hexCipCed + ":" + hexCipHsCed;
 			System.out.println("El mensaje enviado es: " + cipMes);
 			escritor.println(cipMes);
+			
 			/////////////////////////////////////////////
+			Date a = new Date();
 
 			String respuesta = lector.readLine();
 			cipher.init(Cipher.DECRYPT_MODE, simKey);
 			byte[] bRes = cipher.doFinal(DatatypeConverter.parseHexBinary(respuesta));
 			respuesta = new String(bRes);
 			System.out.println("La respuesta recibida es: " + respuesta);
+			
 			////////////////////////////////////////////////
+			Date b = new Date();
+			System.out.println("3. "+ (b.getTime() - a.getTime()));
+			
 			if(!respuesta.equalsIgnoreCase("OK")) {
 				throw new Exception("No se logro transmitir.");
 			}
